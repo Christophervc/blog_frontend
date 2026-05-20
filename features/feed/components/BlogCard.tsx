@@ -1,6 +1,7 @@
 import { ThumbsUp, MessageSquare, Bookmark, Star, MoveHorizontal as MoreHorizontal } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import type { BlogPost } from "@/features/feed/types"
+import Image from "next/image"
 
 interface BlogCardProps {
   post: BlogPost
@@ -60,10 +61,12 @@ export function BlogCard({ post }: BlogCardProps) {
         {post.coverImage && (
           <div className="shrink-0 w-[112px] md:w-[140px]">
             <div className="w-full aspect-[16/9] rounded-sm overflow-hidden bg-gray-100">
-              <img
+              <Image
                 src={post.coverImage}
                 alt={post.title}
                 className="w-full h-full object-cover"
+                width={280}
+                height={158}
               />
             </div>
           </div>

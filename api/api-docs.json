@@ -1,0 +1,1974 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Blog Backend API",
+        "description": "Documentacion backend del blog: autenticacion, usuarios, publicaciones, tags, media y asistencia de IA.",
+        "version": "v1"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080",
+            "description": "Generated server url"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Posts",
+            "description": "Gestiona la consulta y administracion de publicaciones del blog."
+        },
+        {
+            "name": "AI",
+            "description": "Expone herramientas asistidas por IA para mejorar contenido editorial."
+        },
+        {
+            "name": "Tags",
+            "description": "Gestiona los tags usados para clasificar publicaciones."
+        },
+        {
+            "name": "Authentication",
+            "description": "Gestiona el ciclo de autenticacion y sesion de los usuarios."
+        },
+        {
+            "name": "Users",
+            "description": "Gestiona perfiles, administracion de usuarios y consultas publicas de autores."
+        },
+        {
+            "name": "Categories",
+            "description": "Gestiona las categorias disponibles para clasificar publicaciones."
+        },
+        {
+            "name": "Media",
+            "description": "Gestiona la carga y eliminacion de recursos multimedia."
+        }
+    ],
+    "paths": {
+        "/api/v1/users/me": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Obtener mi perfil",
+                "description": "Recupera el perfil completo del usuario autenticado.",
+                "operationId": "getMyProfile",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Actualizar mi perfil",
+                "description": "Actualiza los datos editables del perfil del usuario autenticado.",
+                "operationId": "updateMyProfile",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateUserProfileReq"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Desactivar mi cuenta",
+                "description": "Desactiva la cuenta del usuario autenticado.",
+                "operationId": "deactivateAccount",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MessageResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/posts/{id}": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Obtener publicacion por ID",
+                "description": "Recupera el detalle de una publicacion. Si el usuario esta autenticado, la respuesta puede ajustarse a sus permisos.",
+                "operationId": "getPostById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la publicacion a consultar.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PostResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Actualizar publicacion",
+                "description": "Actualiza una publicacion existente si el usuario autenticado tiene permisos sobre ella.",
+                "operationId": "updatePost",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la publicacion a actualizar.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdatePostReq"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PostResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Eliminar publicacion",
+                "description": "Elimina una publicacion si el usuario autenticado tiene permisos sobre ella.",
+                "operationId": "deletePost",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la publicacion a eliminar.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/tags": {
+            "get": {
+                "tags": [
+                    "Tags"
+                ],
+                "summary": "Listar tags",
+                "description": "Obtiene todos los tags disponibles para consulta publica.",
+                "operationId": "getAllTags",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/TagResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Tags"
+                ],
+                "summary": "Crear tags",
+                "description": "Crea uno o varios tags en una sola solicitud. Requiere rol ADMIN o MODERATOR.",
+                "operationId": "createTags",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TagRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/TagResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/posts": {
+            "post": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Crear publicacion",
+                "description": "Crea una nueva publicacion para el usuario autenticado.",
+                "operationId": "createPost",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreatePostReq"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PostResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/media/upload": {
+            "post": {
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Subir imagen",
+                "description": "Carga una imagen en el proveedor de almacenamiento configurado. Requiere autenticacion y acepta cookie http-only o JWT bearer.",
+                "operationId": "uploadImage",
+                "parameters": [
+                    {
+                        "name": "folder",
+                        "in": "query",
+                        "description": "Carpeta destino permitida: posts, avatars o covers.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        },
+                        "example": "posts"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "string",
+                                "default": "",
+                                "description": "Archivo de imagen a subir."
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ImageUploadResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/categories": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Listar categorias",
+                "description": "Obtiene todas las categorias disponibles para consulta publica.",
+                "operationId": "listCategories",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/CategoryResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Crear categoria",
+                "description": "Crea una nueva categoria. Requiere rol ADMIN o MODERATOR.",
+                "operationId": "createCategory",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CategoryRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CategoryResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Registrar usuario",
+                "description": "Crea una nueva cuenta y devuelve las cookies http-only necesarias para iniciar sesion.",
+                "operationId": "register",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MessageResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/refresh": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Refrescar sesion",
+                "description": "Renueva el access token usando la cookie http-only refresh_token y vuelve a escribir las cookies de autenticacion.",
+                "operationId": "refresh",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MessageResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Cerrar sesion actual",
+                "description": "Invalida la sesion asociada al refresh token recibido por cookie y limpia las cookies de autenticacion del navegador.",
+                "operationId": "logout",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MessageResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/logout-all": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Cerrar todas las sesiones",
+                "description": "Revoca todas las sesiones activas del usuario autenticado y elimina las cookies actuales.",
+                "operationId": "logoutAll",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MessageResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Iniciar sesion",
+                "description": "Autentica al usuario con credenciales y escribe las cookies http-only de acceso y refresh.",
+                "operationId": "login",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MessageResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ai/improve/stream": {
+            "post": {
+                "tags": [
+                    "AI"
+                ],
+                "summary": "Mejorar contenido en streaming",
+                "description": "Inicia una respuesta SSE con sugerencias de mejora para el contenido enviado. Requiere autenticacion y acepta cookie http-only o JWT bearer.",
+                "operationId": "streamImproveText",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AiImprovementRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "text/event-stream": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/users/{id}/status": {
+            "patch": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Actualizar estado de usuario",
+                "description": "Activa o desactiva un usuario por ID. Requiere rol ADMIN o MODERATOR.",
+                "operationId": "updateUserStatus",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del usuario a actualizar.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateUserStatusReq"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/users/{id}/role": {
+            "patch": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Actualizar rol de usuario",
+                "description": "Cambia el rol de un usuario. Requiere rol ADMIN.",
+                "operationId": "updateUserRole",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del usuario cuyo rol se desea actualizar.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateUserRoleReq"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/users/me/change-password": {
+            "patch": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Cambiar mi contrasena",
+                "description": "Actualiza la contrasena del usuario autenticado.",
+                "operationId": "changePassword",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ChangePasswordReq"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MessageResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Listar usuarios",
+                "description": "Lista usuarios paginados. Requiere rol ADMIN o MODERATOR.",
+                "operationId": "getAllUsers",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Indice de pagina.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        },
+                        "example": 0
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "Cantidad de resultados por pagina.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        },
+                        "example": 20
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PageUserResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/users/{id}/stats": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Obtener estadisticas de usuario",
+                "description": "Recupera estadisticas agregadas de un usuario. Requiere rol ADMIN o MODERATOR.",
+                "operationId": "getUserStats",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del usuario a consultar.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserStatsResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/users/{id}/public": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Obtener perfil publico",
+                "description": "Recupera la informacion publica del autor indicado.",
+                "operationId": "getPublicProfile",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del usuario a consultar.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PublicUserResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/{id}/posts": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Listar publicaciones de un autor",
+                "description": "Obtiene publicaciones publicadas de un autor usando paginacion por cursor y filtros opcionales.",
+                "operationId": "getAuthorPosts",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del autor.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    },
+                    {
+                        "name": "cursor",
+                        "in": "query",
+                        "description": "Cursor de la siguiente pagina. Omitir para iniciar desde el primer bloque.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Cantidad maxima de publicaciones por pagina.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        },
+                        "example": 10
+                    },
+                    {
+                        "name": "keyword",
+                        "in": "query",
+                        "description": "Texto a buscar en titulo o contenido.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": null,
+                            "description": "Texto a buscar en titulo o contenido.",
+                            "example": "spring boot"
+                        },
+                        "example": "spring boot"
+                    },
+                    {
+                        "name": "categoryId",
+                        "in": "query",
+                        "description": "ID de la categoria por la que se desea filtrar.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "default": null,
+                            "description": "ID de la categoria por la que se desea filtrar.",
+                            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+                        },
+                        "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+                    },
+                    {
+                        "name": "tagId",
+                        "in": "query",
+                        "description": "ID del tag por el que se desea filtrar.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "default": null,
+                            "description": "ID del tag por el que se desea filtrar.",
+                            "example": "8d9f1a4c-4d4b-4897-95d1-c6fa5e7f7a41"
+                        },
+                        "example": "8d9f1a4c-4d4b-4897-95d1-c6fa5e7f7a41"
+                    },
+                    {
+                        "name": "authorId",
+                        "in": "query",
+                        "description": "ID del autor al que pertenecen las publicaciones.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "default": null,
+                            "description": "ID del autor al que pertenecen las publicaciones.",
+                            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                        },
+                        "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    },
+                    {
+                        "name": "startDate",
+                        "in": "query",
+                        "description": "Fecha inicial del rango de publicacion en formato ISO-8601.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time",
+                            "default": "",
+                            "description": "Fecha inicial del rango de publicacion en formato ISO-8601.",
+                            "example": "2026-05-01T00:00:00"
+                        },
+                        "example": "2026-05-01T00:00:00"
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "query",
+                        "description": "Fecha final del rango de publicacion en formato ISO-8601.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time",
+                            "default": "",
+                            "description": "Fecha final del rango de publicacion en formato ISO-8601.",
+                            "example": "2026-05-31T23:59:59"
+                        },
+                        "example": "2026-05-31T23:59:59"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CursorResponsePostResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/posts/published": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Listar publicaciones publicadas",
+                "description": "Obtiene publicaciones publicadas usando paginacion por cursor y filtros opcionales.",
+                "operationId": "getPublishedPosts",
+                "parameters": [
+                    {
+                        "name": "cursor",
+                        "in": "query",
+                        "description": "Cursor de la siguiente pagina. Omitir para iniciar desde el primer bloque.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Cantidad maxima de publicaciones por pagina.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        },
+                        "example": 10
+                    },
+                    {
+                        "name": "keyword",
+                        "in": "query",
+                        "description": "Texto a buscar en titulo o contenido.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": null,
+                            "description": "Texto a buscar en titulo o contenido.",
+                            "example": "spring boot"
+                        },
+                        "example": "spring boot"
+                    },
+                    {
+                        "name": "categoryId",
+                        "in": "query",
+                        "description": "ID de la categoria por la que se desea filtrar.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "default": null,
+                            "description": "ID de la categoria por la que se desea filtrar.",
+                            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+                        },
+                        "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+                    },
+                    {
+                        "name": "tagId",
+                        "in": "query",
+                        "description": "ID del tag por el que se desea filtrar.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "default": null,
+                            "description": "ID del tag por el que se desea filtrar.",
+                            "example": "8d9f1a4c-4d4b-4897-95d1-c6fa5e7f7a41"
+                        },
+                        "example": "8d9f1a4c-4d4b-4897-95d1-c6fa5e7f7a41"
+                    },
+                    {
+                        "name": "authorId",
+                        "in": "query",
+                        "description": "ID del autor al que pertenecen las publicaciones.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "default": null,
+                            "description": "ID del autor al que pertenecen las publicaciones.",
+                            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                        },
+                        "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    },
+                    {
+                        "name": "startDate",
+                        "in": "query",
+                        "description": "Fecha inicial del rango de publicacion en formato ISO-8601.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time",
+                            "default": "",
+                            "description": "Fecha inicial del rango de publicacion en formato ISO-8601.",
+                            "example": "2026-05-01T00:00:00"
+                        },
+                        "example": "2026-05-01T00:00:00"
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "query",
+                        "description": "Fecha final del rango de publicacion en formato ISO-8601.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time",
+                            "default": "",
+                            "description": "Fecha final del rango de publicacion en formato ISO-8601.",
+                            "example": "2026-05-31T23:59:59"
+                        },
+                        "example": "2026-05-31T23:59:59"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CursorResponsePostResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/posts/drafts": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Listar borradores propios",
+                "description": "Devuelve los borradores del usuario autenticado.",
+                "operationId": "getDrafts",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PostResponse"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/tags/{id}": {
+            "delete": {
+                "tags": [
+                    "Tags"
+                ],
+                "summary": "Eliminar tag",
+                "description": "Elimina un tag existente. Requiere rol ADMIN.",
+                "operationId": "deleteTag",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del tag a eliminar.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/media/{postId}/images/{imageId}": {
+            "delete": {
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Eliminar imagen de publicacion",
+                "description": "Elimina una imagen asociada a una publicacion si el usuario autenticado tiene permisos sobre ella.",
+                "operationId": "deletePostImage",
+                "parameters": [
+                    {
+                        "name": "postId",
+                        "in": "path",
+                        "description": "ID de la publicacion propietaria de la imagen.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    },
+                    {
+                        "name": "imageId",
+                        "in": "path",
+                        "description": "ID de la imagen a eliminar.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/categories/{id}": {
+            "delete": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Eliminar categoria",
+                "description": "Elimina una categoria existente. Requiere rol ADMIN.",
+                "operationId": "deleteCategory",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la categoria a eliminar.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "UpdateUserProfileReq": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "minLength": 2
+                    },
+                    "bio": {
+                        "type": "string",
+                        "maxLength": 500,
+                        "minLength": 0
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            },
+            "UserResponse": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "USER",
+                            "MODERATOR",
+                            "ADMIN"
+                        ]
+                    },
+                    "bio": {
+                        "type": "string"
+                    },
+                    "active": {
+                        "type": "boolean"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "PostImageRequest": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "publicId": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "altText": {
+                        "type": "string"
+                    },
+                    "isCover": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "publicId",
+                    "url"
+                ]
+            },
+            "UpdatePostReq": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "maxLength": 200,
+                        "minLength": 3
+                    },
+                    "content": {
+                        "type": "string",
+                        "maxLength": 50000,
+                        "minLength": 10
+                    },
+                    "categoryId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "tagIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "maxItems": 10,
+                        "minItems": 0,
+                        "uniqueItems": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "DRAFT",
+                            "PUBLISHED"
+                        ]
+                    },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PostImageRequest"
+                        }
+                    }
+                },
+                "required": [
+                    "categoryId",
+                    "content",
+                    "status",
+                    "tagIds",
+                    "title"
+                ]
+            },
+            "AuthorSummary": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "CategoryResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "PostImageResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "url": {
+                        "type": "string"
+                    },
+                    "altText": {
+                        "type": "string"
+                    },
+                    "isCover": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "PostResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "excerpt": {
+                        "type": "string"
+                    },
+                    "content": {
+                        "type": "string"
+                    },
+                    "author": {
+                        "$ref": "#/components/schemas/AuthorSummary"
+                    },
+                    "category": {
+                        "$ref": "#/components/schemas/CategoryResponse"
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TagResponse"
+                        },
+                        "uniqueItems": true
+                    },
+                    "readingTime": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "DRAFT",
+                            "PUBLISHED"
+                        ]
+                    },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PostImageResponse"
+                        }
+                    }
+                }
+            },
+            "TagResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "TagRequest": {
+                "type": "object",
+                "properties": {
+                    "names": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "maxLength": 30,
+                            "minLength": 2,
+                            "pattern": "^[\\w\\s-]+$"
+                        },
+                        "maxItems": 10,
+                        "minItems": 0,
+                        "uniqueItems": true
+                    }
+                },
+                "required": [
+                    "names"
+                ]
+            },
+            "CreatePostReq": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "maxLength": 200,
+                        "minLength": 3
+                    },
+                    "content": {
+                        "type": "string",
+                        "maxLength": 50000,
+                        "minLength": 10
+                    },
+                    "categoryId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "tagIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "maxItems": 10,
+                        "minItems": 0,
+                        "uniqueItems": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "DRAFT",
+                            "PUBLISHED"
+                        ]
+                    },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PostImageRequest"
+                        }
+                    }
+                },
+                "required": [
+                    "categoryId",
+                    "content",
+                    "status",
+                    "tagIds",
+                    "title"
+                ]
+            },
+            "ImageUploadResponse": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string"
+                    },
+                    "publicId": {
+                        "type": "string"
+                    }
+                }
+            },
+            "CategoryRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "minLength": 2,
+                        "pattern": "^[\\w\\s-]+$"
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            },
+            "RegisterRequest": {
+                "type": "object",
+                "properties": {
+                    "fullName": {
+                        "type": "string",
+                        "maxLength": 30,
+                        "minLength": 3
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "minLength": 1
+                    },
+                    "password": {
+                        "type": "string",
+                        "maxLength": 2147483647,
+                        "minLength": 6,
+                        "pattern": "^(?=.*[A-Z])(?=.*\\d).*$"
+                    },
+                    "confirmPassword": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "required": [
+                    "confirmPassword",
+                    "email",
+                    "fullName",
+                    "password"
+                ]
+            },
+            "MessageResponse": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "LoginRequest": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "minLength": 1
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "required": [
+                    "email",
+                    "password"
+                ]
+            },
+            "AiImprovementRequest": {
+                "type": "object",
+                "properties": {
+                    "content": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "categoryId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "tone": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "categoryId",
+                    "content"
+                ]
+            },
+            "UpdateUserStatusReq": {
+                "type": "object",
+                "properties": {
+                    "active": {
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "active"
+                ]
+            },
+            "UpdateUserRoleReq": {
+                "type": "object",
+                "properties": {
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "USER",
+                            "MODERATOR",
+                            "ADMIN"
+                        ]
+                    }
+                },
+                "required": [
+                    "role"
+                ]
+            },
+            "ChangePasswordReq": {
+                "type": "object",
+                "properties": {
+                    "oldPassword": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "newPassword": {
+                        "type": "string",
+                        "maxLength": 2147483647,
+                        "minLength": 6,
+                        "pattern": "^(?=.*[A-Z])(?=.*\\d).*$"
+                    }
+                },
+                "required": [
+                    "newPassword",
+                    "oldPassword"
+                ]
+            },
+            "PageUserResponse": {
+                "type": "object",
+                "properties": {
+                    "totalElements": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "totalPages": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserResponse"
+                        }
+                    },
+                    "number": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "sort": {
+                        "$ref": "#/components/schemas/SortObject"
+                    },
+                    "first": {
+                        "type": "boolean"
+                    },
+                    "last": {
+                        "type": "boolean"
+                    },
+                    "numberOfElements": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pageable": {
+                        "$ref": "#/components/schemas/PageableObject"
+                    },
+                    "empty": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "PageableObject": {
+                "type": "object",
+                "properties": {
+                    "offset": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "sort": {
+                        "$ref": "#/components/schemas/SortObject"
+                    },
+                    "paged": {
+                        "type": "boolean"
+                    },
+                    "pageSize": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pageNumber": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "unpaged": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "SortObject": {
+                "type": "object",
+                "properties": {
+                    "empty": {
+                        "type": "boolean"
+                    },
+                    "sorted": {
+                        "type": "boolean"
+                    },
+                    "unsorted": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "UserStatsResponse": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "USER",
+                            "MODERATOR",
+                            "ADMIN"
+                        ]
+                    },
+                    "active": {
+                        "type": "boolean"
+                    },
+                    "totalPosts": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "publishedPosts": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "joinedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "PublicUserResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "bio": {
+                        "type": "string"
+                    },
+                    "joinedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "CursorResponsePostResponse": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PostResponse"
+                        }
+                    },
+                    "nextCursor": {
+                        "type": "string"
+                    },
+                    "hasNextPage": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "cookieAuth": {
+                "type": "apiKey",
+                "description": "Autenticacion con JWT almacenado en la cookie http-only access_token.",
+                "name": "access_token",
+                "in": "cookie"
+            },
+            "bearerAuth": {
+                "type": "http",
+                "description": "Autenticacion con access token JWT enviado en el header Authorization: Bearer {token}.",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}

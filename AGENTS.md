@@ -17,9 +17,11 @@ pnpm lint         # Run ESLint
 ## Architecture
 - **`app/`** — Next.js App Router entry. `layout.tsx` (root layout with Geist fonts), `page.tsx` (home).
 - **`components/ui/`** — shadcn/ui primitives. Add new ones via `pnpm shadcn add <component>`.
-- **`features/feed/`** — Feature-driven domain for the feed (Header, LeftSidebar, MainFeed, RightSidebar, BlogCard). `components/`, `constants/` (mock data, static types), `types/`.
+- **`features/feed/`** — Feature-driven domain for the feed. `components/`, `constants/` (mock data, tabs), `hooks/` (useInfiniteQuery wrappers), `services/` (axios calls + mappers), `types/` (API & UI types).
+- **`lib/api.ts`** — Axios instance with `baseURL: http://localhost:8080/api/v1`.
+- **`app/providers.tsx`** — Client component wrapping `<QueryClientProvider>` for TanStack Query.
 - **`lib/utils.ts`** — `cn()` helper (clsx + tailwind-merge).
-- **`hooks/`** — Custom React hooks (e.g., `use-mobile.ts`).
+- **`hooks/`** — Shared hooks (e.g., `use-mobile.ts`).
 
 ## Conventions
 - **Path alias**: `@/*` maps to `./*` (e.g., `@/components/ui/button`).
@@ -33,3 +35,4 @@ pnpm lint         # Run ESLint
 - `.env*` files are gitignored; load env vars manually if needed.
 - `next build` must pass before deployment; no separate typecheck script (TypeScript is checked during build).
 - pnpm workspace exists but is a single-package project (only ignores `sharp`/`unrs-resolver` built deps).
+- **API**: Backend runs at `http://localhost:8080/api/v1`. All calls go through `lib/api.ts` (axios). Public endpoints like `GET /posts/published` need no auth. Use `@tanstack/react-query` for async state with `<QueryClientProvider>` in `app/providers.tsx`.
