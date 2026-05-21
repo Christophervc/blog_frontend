@@ -18,36 +18,39 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form"
-import { loginSchema, type LoginFormData } from "@/lib/schemas/authSchema"
+import { registerSchema, type RegisterFormData } from "@/lib/schemas/authSchema"
 import { authService } from "@/lib/services/authService"
 import { useAuthStore } from "@/lib/store/authStore"
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter()
   const loginSuccess = useAuthStore((state) => state.loginSuccess)
   const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const form = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
+      fullName: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
   })
 
   const { isSubmitting } = form.formState
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: RegisterFormData) => {
     setError(null)
     try {
-      await authService.login(data.email, data.password)
-      loginSuccess(data.email, data.email)
+      await authService.register(data.fullName, data.email, data.password, data.confirmPassword)
+      loginSuccess(data.email, data.fullName)
       router.push("/")
     } catch (err: unknown) {
       if (err && typeof err === "object" && "response" in err) {
         const axiosErr = err as { response?: { data?: { message?: string } } }
-        setError(axiosErr.response?.data?.message ?? "Invalid email or password")
+        setError(axiosErr.response?.data?.message ?? "Registration failed. Please try again.")
       } else {
         setError("An unexpected error occurred. Please try again.")
       }
@@ -59,15 +62,33 @@ export default function LoginPage() {
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-semibold" style={{ fontFamily: '"Inter", sans-serif' }}>
-            Sign in to Blogium
+            Create your account
           </CardTitle>
           <CardDescription>
-            Enter your email and password to access your account.
+            Sign up to start reading and writing on Blogium.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="fullName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Full Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="John Doe"
+                        autoComplete="name"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="email"
@@ -97,8 +118,8 @@ export default function LoginPage() {
                       <div className="relative">
                         <Input
                           type={showPassword ? "text" : "password"}
-                          placeholder="Enter your password"
-                          autoComplete="current-password"
+                          placeholder="At least 6 characters"
+                          autoComplete="new-password"
                           className="pr-10"
                           {...field}
                         />
@@ -110,6 +131,41 @@ export default function LoginPage() {
                           tabIndex={-1}
                         >
                           {showPassword ? (
+                            <EyeOff className="w-4 h-4" />
+                          ) : (
+                            <Eye className="w-4 h-4" />
+                          )}
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          type={showConfirmPassword ? "text" : "password"}
+                          placeholder="Repeat your password"
+                          autoComplete="new-password"
+                          className="pr-10"
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPassword((prev) => !prev)}
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                          aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                          tabIndex={-1}
+                        >
+                          {showConfirmPassword ? (
                             <EyeOff className="w-4 h-4" />
                           ) : (
                             <Eye className="w-4 h-4" />
@@ -137,19 +193,19 @@ export default function LoginPage() {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                    Signing in...
+                    Creating account...
                   </>
                 ) : (
-                  "Sign In"
+                  "Sign Up"
                 )}
               </Button>
             </form>
           </Form>
 
           <p className="text-center text-sm text-muted-foreground mt-4">
-            Don&apos;t have an account?{" "}
-            <Link href="/auth/register" className="font-semibold text-foreground hover:underline">
-              Sign up
+            Already have an account?{" "}
+            <Link href="/auth/login" className="font-semibold text-foreground hover:underline">
+              Sign in
             </Link>
           </p>
         </CardContent>

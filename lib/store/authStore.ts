@@ -5,7 +5,7 @@ interface AuthState {
   isAuthenticated: boolean
   userInitial: string | null
   email: string | null
-  loginSuccess: (email: string) => void
+  loginSuccess: (email: string, displayName: string) => void
   logout: () => void
 }
 
@@ -15,8 +15,8 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       userInitial: null,
       email: null,
-      loginSuccess: (email: string) => {
-        const initial = email.charAt(0).toUpperCase()
+      loginSuccess: (email: string, displayName: string) => {
+        const initial = displayName.charAt(0).toUpperCase()
         set({ isAuthenticated: true, userInitial: initial, email })
       },
       logout: () => {
