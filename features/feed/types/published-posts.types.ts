@@ -17,3 +17,18 @@ export interface PublishedPostCard {
   updatedAt: string
   images: { id: string; url: string; altText: string; isCover: boolean }[]
 }
+
+export interface CreatePostDTO {
+  title: string
+  content: string
+  excerpt?: string
+  categoryId: string
+  tagIds: string[]
+  images?: { url: string; altText?: string; isCover?: boolean }[]
+  status: "DRAFT" | "PUBLISHED"
+}
+
+export interface UploadMediaResponse {
+  url: string
+  publicId: string
+}
