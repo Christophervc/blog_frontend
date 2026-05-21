@@ -18,3 +18,8 @@ export async function getPostBySlug(slug: string) {
   const { data } = await api.get<PostDetail>(`/posts/${slug}`)
   return data
 }
+
+export async function getPostById(id: string) {
+  const { data } = await api.get<PostDetail>(`/posts/${id}`)
+  return data
+}
