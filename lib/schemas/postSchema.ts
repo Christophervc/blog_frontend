@@ -12,6 +12,18 @@ export const createPostSchema = z.object({
   categoryId: z.string().uuid("Invalid category ID"),
   tagIds: z.array(z.string().uuid()).max(10, "Maximum 10 tags allowed"),
   status: z.enum(["PUBLISHED", "DRAFT"]),
+  images: z
+    .array(
+      z.object({
+        url: z.string().url(),
+        publicId: z.string().optional(),
+        altText: z.string().optional(),
+        isCover: z.boolean().optional(),
+      })
+    )
+    .max(10, "Maximum 10 images allowed")
+    .optional()
+    .default([]),
 })
 
 export type CreatePostFormData = z.infer<typeof createPostSchema>
