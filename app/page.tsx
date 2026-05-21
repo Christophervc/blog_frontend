@@ -1,5 +1,5 @@
 "use client";
-import { Header } from "@/features/feed/components/Header";
+import { Navbar } from "@/components/Navbar";
 import { LeftSidebar } from "@/features/feed/components/LeftSidebar";
 import { MainFeed } from "@/features/feed/components/MainFeed";
 import { RightSidebar } from "@/features/feed/components/RightSidebar";
@@ -10,7 +10,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: '"Inter", sans-serif' }}>
-      <Header onMenuToggle={() => setSidebarOpen((prev) => !prev)} />
+      <Navbar onMenuToggle={() => setSidebarOpen((prev) => !prev)} />
       <LeftSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       {/* Main layout: offset by sidebar on desktop */}
