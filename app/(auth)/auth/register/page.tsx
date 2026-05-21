@@ -6,6 +6,7 @@ import Link from "next/link"
 import { Eye, EyeOff, Loader2 } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -27,7 +28,6 @@ export default function RegisterPage() {
   const loginSuccess = useAuthStore((state) => state.loginSuccess)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -42,17 +42,27 @@ export default function RegisterPage() {
   const { isSubmitting } = form.formState
 
   const onSubmit = async (data: RegisterFormData) => {
-    setError(null)
     try {
       await authService.register(data.fullName, data.email, data.password, data.confirmPassword)
       loginSuccess(data.email, data.fullName)
+      toast.success("Account created successfully!")
       router.push("/")
     } catch (err: unknown) {
       if (err && typeof err === "object" && "response" in err) {
-        const axiosErr = err as { response?: { data?: { message?: string } } }
-        setError(axiosErr.response?.data?.message ?? "Registration failed. Please try again.")
+        const axiosErr = err as {
+          response?: { status?: number; data?: { message?: string; detail?: string } }
+        }
+        const status = axiosErr.response?.status
+        const serverMessage =
+          axiosErr.response?.data?.message ?? axiosErr.response?.data?.detail
+
+        if (status === 429) {
+          toast.error("Too many attempts. Please wait a moment before trying again.")
+        } else {
+          toast.error(serverMessage ?? "Registration failed. Please try again.")
+        }
       } else {
-        setError("An unexpected error occurred. Please try again.")
+        toast.error("Something went wrong. Please try again later.")
       }
     }
   }
@@ -177,10 +187,6 @@ export default function RegisterPage() {
                   </FormItem>
                 )}
               />
-
-              {error && (
-                <p className="text-sm text-destructive text-center">{error}</p>
-              )}
 
               <Button
                 type="submit"

@@ -6,6 +6,7 @@ import Link from "next/link"
 import { Eye, EyeOff, Loader2 } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -26,7 +27,6 @@ export default function LoginPage() {
   const router = useRouter()
   const loginSuccess = useAuthStore((state) => state.loginSuccess)
   const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -39,17 +39,27 @@ export default function LoginPage() {
   const { isSubmitting } = form.formState
 
   const onSubmit = async (data: LoginFormData) => {
-    setError(null)
     try {
       await authService.login(data.email, data.password)
       loginSuccess(data.email, data.email)
+      toast.success("Welcome back!")
       router.push("/")
     } catch (err: unknown) {
       if (err && typeof err === "object" && "response" in err) {
-        const axiosErr = err as { response?: { data?: { message?: string } } }
-        setError(axiosErr.response?.data?.message ?? "Invalid email or password")
+        const axiosErr = err as {
+          response?: { status?: number; data?: { message?: string; detail?: string } }
+        }
+        const status = axiosErr.response?.status
+        const serverMessage =
+          axiosErr.response?.data?.message ?? axiosErr.response?.data?.detail
+
+        if (status === 429) {
+          toast.error("Too many attempts. Please wait a moment before trying again.")
+        } else {
+          toast.error(serverMessage ?? "Invalid email or password")
+        }
       } else {
-        setError("An unexpected error occurred. Please try again.")
+        toast.error("Something went wrong. Please try again later.")
       }
     }
   }
@@ -121,10 +131,6 @@ export default function LoginPage() {
                   </FormItem>
                 )}
               />
-
-              {error && (
-                <p className="text-sm text-destructive text-center">{error}</p>
-              )}
 
               <Button
                 type="submit"
