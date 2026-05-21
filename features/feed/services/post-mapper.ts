@@ -6,6 +6,7 @@ export function mapPostToBlogCard(post: PublishedPostCard): BlogPost {
 
   return {
     id: post.id,
+    slug: post.slug,
     publication: post.category.name,
     author: post.author.name,
     date: formatRelativeDate(post.createdAt),

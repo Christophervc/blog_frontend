@@ -3,6 +3,7 @@ import type { BlogPost } from "@/features/feed/types"
 export const posts: BlogPost[] = [
   {
     id: "1",
+    slug: "software-engineer-atlassian-laid-off",
     publication: "Techx_official",
     publicationLogo: "",
     author: "Ship X / TechX",
@@ -17,6 +18,7 @@ export const posts: BlogPost[] = [
   },
   {
     id: "2",
+    slug: "8-backend-skills-every-developer-2026",
     publication: "All About Computers",
     publicationLogo: "",
     author: "Gopi C K",

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import Link from "next/link"
 import { BlogCard } from "./BlogCard"
 import { usePublishedPosts } from "@/features/feed/hooks/use-published-posts"
 import { mapPostToBlogCard } from "@/features/feed/services/post-mapper"
@@ -99,7 +100,9 @@ export function MainFeed() {
         <div className="flex flex-col">
           {blogCards.map((post, index) => (
             <div key={post.id}>
-              <BlogCard post={post} />
+              <Link href={`/posts/${post.slug}-${post.id}`}>
+                <BlogCard post={post} />
+              </Link>
               {index < blogCards.length - 1 && (
                 <div style={{ borderTop: "1px solid #E6E6E6" }} />
               )}
