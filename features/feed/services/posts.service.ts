@@ -1,5 +1,5 @@
 import { api } from "@/lib/api"
-import type { PublishedPostsCursorResponse } from "@/features/feed/types/published-posts.types"
+import type { PublishedPostsCursorResponse, PublishedPostCard } from "@/features/feed/types/published-posts.types"
 import type { Data as PostDetail } from "@/features/feed/types/blog-detail.interface"
 
 export interface GetPublishedPostsParams {
@@ -21,5 +21,10 @@ export async function getPostBySlug(slug: string) {
 
 export async function getPostById(id: string) {
   const { data } = await api.get<PostDetail>(`/posts/${id}`)
+  return data
+}
+
+export async function getDrafts() {
+  const { data } = await api.get<PublishedPostCard[]>("/posts/drafts")
   return data
 }

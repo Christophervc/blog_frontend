@@ -1,5 +1,10 @@
-import { Plus } from "lucide-react"
+"use client"
+
+import { Plus, NotebookPen } from "lucide-react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { navItems, followingItems } from "@/features/feed/constants/navigation"
+import { useAuthStore } from "@/lib/store/authStore"
 
 interface LeftSidebarProps {
   isOpen?: boolean
@@ -7,6 +12,9 @@ interface LeftSidebarProps {
 }
 
 export function LeftSidebar({ isOpen, onClose }: LeftSidebarProps) {
+  const pathname = usePathname()
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+
   return (
     <>
       {isOpen && (
@@ -44,6 +52,26 @@ export function LeftSidebar({ isOpen, onClose }: LeftSidebarProps) {
               <span className={active ? "font-semibold" : ""}>{label}</span>
             </button>
           ))}
+
+          {isAuthenticated && (
+            <>
+              <div className="my-2" style={{ borderTop: "1px solid #E6E6E6" }} />
+              <Link
+                href="/drafts"
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors w-full text-left
+                  ${pathname === "/drafts" ? "text-[#242424]" : "text-[#757575] hover:text-[#242424] hover:bg-gray-50"}
+                `}
+                style={{ fontFamily: '"Inter", sans-serif' }}
+                onClick={onClose}
+              >
+                <NotebookPen
+                  className="w-5 h-5 shrink-0"
+                  style={{ color: pathname === "/drafts" ? "#242424" : "#757575" }}
+                />
+                <span className={pathname === "/drafts" ? "font-semibold" : ""}>Drafts</span>
+              </Link>
+            </>
+          )}
         </nav>
 
         <div className="my-5 mx-4" style={{ borderTop: "1px solid #E6E6E6" }} />
