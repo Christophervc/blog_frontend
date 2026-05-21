@@ -28,3 +28,8 @@ export async function getDrafts() {
   const { data } = await api.get<PublishedPostCard[]>("/posts/drafts")
   return data
 }
+
+export async function getDraftById(id: string) {
+  const { data } = await api.get<PostDetail>(`/posts/${id}`)
+  return data
+}

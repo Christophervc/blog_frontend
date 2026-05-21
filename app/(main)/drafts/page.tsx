@@ -1,6 +1,7 @@
 "use client"
 
 import { NotebookPen } from "lucide-react"
+import Link from "next/link"
 import { useDrafts } from "@/features/feed/hooks/use-drafts"
 import { BlogCard } from "@/features/feed/components/BlogCard"
 import { mapPostToBlogCard } from "@/features/feed/services/post-mapper"
@@ -79,7 +80,9 @@ export default function DraftsPage() {
       <div className="flex flex-col">
         {draftCards.map((post, index) => (
           <div key={post.id}>
-            <BlogCard post={post} />
+            <Link href={`/drafts/${post.id}`}>
+              <BlogCard post={post} />
+            </Link>
             {index < draftCards.length - 1 && (
               <div style={{ borderTop: "1px solid #E6E6E6" }} />
             )}
