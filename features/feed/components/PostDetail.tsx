@@ -50,7 +50,7 @@ export function PostDetail({ post }: PostDetailProps) {
       <h1
         className="text-3xl md:text-4xl font-bold leading-tight mb-8"
         style={{
-          fontFamily: '"Lora", serif',
+          fontFamily: '"Inter", sans-serif',
           color: "#242424",
           lineHeight: "1.2",
         }}
@@ -58,7 +58,7 @@ export function PostDetail({ post }: PostDetailProps) {
         {post.title}
       </h1>
 
-      {/* Cover image */}
+      {/* Cover image 
       {coverImage && (
         <div className="mb-8 rounded-sm overflow-hidden bg-gray-100">
           <Image
@@ -71,6 +71,7 @@ export function PostDetail({ post }: PostDetailProps) {
           />
         </div>
       )}
+      */}
 
       {/* Divider */}
       <div className="mb-8" style={{ borderTop: "1px solid #E6E6E6" }} />

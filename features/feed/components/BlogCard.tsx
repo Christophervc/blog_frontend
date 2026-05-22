@@ -37,9 +37,9 @@ export function BlogCard({ post }: BlogCardProps) {
       <div className="flex items-start gap-4">
         <div className="flex-1 min-w-0 pr-2">
           <h2
-            className="font-bold text-xl leading-tight mb-2"
+            className="font-bold text-xl md:text-2xl leading-tight mb-2"
             style={{
-              fontFamily: '"Lora", serif',
+              fontFamily: '"Inter", sans-serif',
               color: "#242424",
               lineHeight: "1.3",
             }}
@@ -59,14 +59,14 @@ export function BlogCard({ post }: BlogCardProps) {
         </div>
 
         {post.coverImage && (
-          <div className="shrink-0 w-[112px] md:w-[140px]">
-            <div className="w-full aspect-[16/9] rounded-sm overflow-hidden bg-gray-100">
+          <div className="shrink-0 w-28 md:w-35 lg:w-40 rounded-sm overflow-hidden bg-gray-100">
+            <div className="w-full aspect-video rounded-sm overflow-hidden bg-gray-100">
               <Image
                 src={post.coverImage}
                 alt={post.title}
                 className="w-full h-full object-cover"
-                width={280}
-                height={158}
+                width={400}
+                height={240}
               />
             </div>
           </div>

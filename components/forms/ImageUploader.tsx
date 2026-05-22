@@ -4,7 +4,6 @@ import { useRef } from "react"
 import { useUploadMedia } from "@/features/feed/hooks/useUploadMedia"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { ImagePlus, X, Loader2, Star } from "lucide-react"
 import Image from "next/image"
 
@@ -18,9 +17,10 @@ export interface ImageItem {
 interface ImageUploaderProps {
   value: ImageItem[]
   onChange: (value: ImageItem[]) => void
+  postTitle?: string
 }
 
-export function ImageUploader({ value, onChange }: ImageUploaderProps) {
+export function ImageUploader({ value, onChange, postTitle }: ImageUploaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const uploadMedia = useUploadMedia()
   const isFull = value.length >= 10
@@ -37,6 +37,7 @@ export function ImageUploader({ value, onChange }: ImageUploaderProps) {
             url: result.url,
             publicId: result.publicId,
             isCover: value.length === 0,
+            altText: postTitle || "",
           }
           onChange([...value, newImage])
         },
@@ -49,22 +50,12 @@ export function ImageUploader({ value, onChange }: ImageUploaderProps) {
   }
 
   function removeImage(index: number) {
-    const removed = value[index]
     const newList = value.filter((_, i) => i !== index)
 
-    // If removed image was the cover, assign cover to the first remaining
-    if (removed.isCover && newList.length > 0) {
+    if (newList.length > 0) {
       newList[0].isCover = true
     }
 
-    onChange(newList)
-  }
-
-  function toggleCover(index: number) {
-    const newList = value.map((img, i) => ({
-      ...img,
-      isCover: i === index,
-    }))
     onChange(newList)
   }
 
@@ -136,8 +127,8 @@ export function ImageUploader({ value, onChange }: ImageUploaderProps) {
                   className="object-cover"
                   sizes="(max-width: 768px) 50vw, 33vw"
                 />
-                {/* Cover badge */}
-                {image.isCover && (
+                {/* Cover badge — first image is always the cover */}
+                {index === 0 && (
                   <div className="absolute top-1 left-1">
                     <div
                       className="flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-medium text-white"
@@ -160,22 +151,9 @@ export function ImageUploader({ value, onChange }: ImageUploaderProps) {
               </div>
 
               {/* Controls */}
-              <div className="p-2 space-y-2">
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => toggleCover(index)}
-                    className={`text-xs font-medium px-2 py-0.5 rounded transition-colors ${
-                      image.isCover
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-gray-100 text-[#757575] hover:bg-gray-200"
-                    }`}
-                  >
-                    {image.isCover ? "★ Cover" : "Set as cover"}
-                  </button>
-                </div>
+              <div className="p-2">
                 <Input
-                  placeholder="Alt text..."
+                  placeholder="Alt text (SEO)..."
                   value={image.altText ?? ""}
                   onChange={(e) => updateAltText(index, e.target.value)}
                   className="h-7 text-xs"

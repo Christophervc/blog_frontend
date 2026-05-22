@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useCallback } from "react"
+import { useEffect, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -15,7 +15,6 @@ import type { CreatePostDTO } from "@/features/feed/types/published-posts.types"
 import { TiptapEditor } from "@/components/editor/TiptapEditor"
 import { CategorySelect } from "@/components/forms/CategorySelect"
 import { TagMultiSelect } from "@/components/forms/TagMultiSelect"
-import { ImageUploader } from "@/components/forms/ImageUploader"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -26,10 +25,33 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 
+function extractImagesFromContent(
+  html: string,
+  urlToPublicId: Map<string, string>,
+  postTitle?: string
+): NonNullable<CreatePostDTO["images"]> {
+  const images: NonNullable<CreatePostDTO["images"]> = []
+  const regex = /<img[^>]+src="([^">]+)"[^>]*\/?>/gi
+  let match: RegExpExecArray | null
+
+  while ((match = regex.exec(html)) !== null) {
+    const url = match[1]
+    images.push({
+      url,
+      publicId: urlToPublicId.get(url) ?? "",
+      altText: postTitle || "",
+      isCover: images.length === 0,
+    })
+  }
+
+  return images
+}
+
 export default function WritePage() {
   const router = useRouter()
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
   const createPost = useCreatePost()
+  const urlToPublicIdRef = useRef(new Map<string, string>())
 
   const form = useForm<CreatePostFormData>({
     resolver: zodResolver(createPostSchema),
@@ -41,6 +63,8 @@ export default function WritePage() {
       status: "DRAFT",
     },
   })
+
+  const watchedTitle = form.watch("title")
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -54,6 +78,7 @@ export default function WritePage() {
       if (!isValid) return
 
       const data = form.getValues()
+      const images = extractImagesFromContent(data.content, urlToPublicIdRef.current, data.title)
 
       const dto: CreatePostDTO = {
         title: data.title,
@@ -61,7 +86,7 @@ export default function WritePage() {
         categoryId: data.categoryId,
         tagIds: data.tagIds,
         status,
-        images: data.images as CreatePostDTO["images"],
+        images: images.length > 0 ? images : undefined,
       }
 
       createPost.mutate(dto, {
@@ -129,7 +154,7 @@ export default function WritePage() {
                   placeholder="Title"
                   className="w-full text-4xl font-bold outline-none bg-transparent placeholder:text-[#757575]/50"
                   style={{
-                    fontFamily: '"Lora", serif',
+                    fontFamily: '"Inter", sans-serif',
                     color: "#242424",
                     border: "none",
                   }}
@@ -147,7 +172,13 @@ export default function WritePage() {
           render={({ field }) => (
             <FormItem className="mb-8">
               <FormControl>
-                <TiptapEditor value={field.value} onChange={field.onChange} />
+                <TiptapEditor
+                  value={field.value}
+                  onChange={field.onChange}
+                  onImageUploaded={({ url, publicId }) => {
+                    urlToPublicIdRef.current.set(url, publicId)
+                  }}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -178,21 +209,6 @@ export default function WritePage() {
               <FormLabel>Tags</FormLabel>
               <FormControl>
                 <TagMultiSelect value={field.value} onChange={field.onChange} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Images */}
-        <FormField
-          control={form.control}
-          name="images"
-          render={({ field }) => (
-            <FormItem className="mb-6">
-              <FormLabel>Images</FormLabel>
-              <FormControl>
-                <ImageUploader value={field.value ?? []} onChange={field.onChange} />
               </FormControl>
               <FormMessage />
             </FormItem>

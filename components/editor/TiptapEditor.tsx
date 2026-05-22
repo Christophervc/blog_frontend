@@ -20,9 +20,10 @@ interface TiptapEditorProps {
   value: string
   onChange: (html: string) => void
   placeholder?: string
+  onImageUploaded?: (image: { url: string; publicId: string }) => void
 }
 
-export function TiptapEditor({ value, onChange }: TiptapEditorProps) {
+export function TiptapEditor({ value, onChange, onImageUploaded }: TiptapEditorProps) {
   const [isReady, setIsReady] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const uploadMedia = useUploadMedia()
@@ -62,6 +63,7 @@ export function TiptapEditor({ value, onChange }: TiptapEditorProps) {
       {
         onSuccess: (result) => {
           editor.chain().focus().setImage({ src: result.url }).run()
+          onImageUploaded?.({ url: result.url, publicId: result.publicId })
         },
       }
     )
