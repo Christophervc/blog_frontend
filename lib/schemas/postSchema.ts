@@ -22,8 +22,7 @@ export const createPostSchema = z.object({
       })
     )
     .max(10, "Maximum 10 images allowed")
-    .optional()
-    .default([]),
+    .optional(),
 })
 
 export type CreatePostFormData = z.infer<typeof createPostSchema>

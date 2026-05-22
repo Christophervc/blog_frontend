@@ -48,7 +48,9 @@ export async function uploadMedia(file: File, folder: string) {
   const formData = new FormData()
   formData.append("file", file)
   formData.append("folder", folder)
-  const { data } = await api.post<UploadMediaResponse>("/media/upload", formData)
+  const { data } = await api.post<UploadMediaResponse>("/media/upload", formData, {
+    headers: { "Content-Type": undefined },
+  })
   return data
 }
 

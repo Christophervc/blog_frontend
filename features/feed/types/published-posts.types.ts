@@ -24,7 +24,7 @@ export interface CreatePostDTO {
   excerpt?: string
   categoryId: string
   tagIds: string[]
-  images?: { url: string; altText?: string; isCover?: boolean }[]
+  images?: { url: string; publicId: string; altText?: string; isCover?: boolean }[]
   status: "DRAFT" | "PUBLISHED"
 }
 

@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useRouter } from "next/navigation"
-import { Search, SquarePen, Bell, Menu } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation";
+import { Search, SquarePen, Bell, Menu } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -11,27 +11,27 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuItem,
-} from "@/components/ui/dropdown-menu"
-import { useAuthStore } from "@/lib/store/authStore"
-import { authService } from "@/lib/services/authService"
+} from "@/components/ui/dropdown-menu";
+import { useAuthStore } from "@/lib/store/authStore";
+import { authService } from "@/lib/services/authService";
 
 interface NavbarProps {
-  onMenuToggle: () => void
+  onMenuToggle: () => void;
 }
 
 export function Navbar({ onMenuToggle }: NavbarProps) {
-  const router = useRouter()
-  const { isAuthenticated, userInitial, email, logout } = useAuthStore()
+  const router = useRouter();
+  const { isAuthenticated, userInitial, email, logout } = useAuthStore();
 
   const handleLogout = async () => {
     try {
-      await authService.logout()
+      await authService.logout();
     } catch {
       // Even if API call fails, clear local state
     }
-    logout()
-    router.push("/")
-  }
+    logout();
+    router.push("/");
+  };
 
   return (
     <header
@@ -59,7 +59,10 @@ export function Navbar({ onMenuToggle }: NavbarProps) {
           Blogium
         </span>
 
-        <div className="hidden md:flex items-center gap-2 rounded-full px-3 h-9 w-64" style={{ backgroundColor: "#F2F2F2" }}>
+        <div
+          className="hidden md:flex items-center gap-2 rounded-full px-3 h-9 w-64"
+          style={{ backgroundColor: "#F2F2F2" }}
+        >
           <Search className="w-4 h-4 shrink-0" style={{ color: "#757575" }} />
           <input
             type="text"
@@ -82,15 +85,14 @@ export function Navbar({ onMenuToggle }: NavbarProps) {
           Get app
         </button>
 
-        {isAuthenticated && (
-          <button
-            className="hidden sm:flex items-center gap-1.5 px-2 h-8 rounded-full text-sm transition-colors hover:bg-gray-100"
-            style={{ color: "#757575", fontFamily: '"Inter", sans-serif' }}
-          >
-            <SquarePen className="w-4 h-4" />
-            <span className="text-sm">Write</span>
-          </button>
-        )}
+        <button
+          onClick={() => router.push("/write")}
+          className="hidden sm:flex items-center gap-1.5 px-2 h-8 rounded-full text-sm transition-colors hover:bg-gray-100"
+          style={{ color: "#757575", fontFamily: '"Inter", sans-serif' }}
+        >
+          <SquarePen className="w-4 h-4" />
+          <span className="text-sm">Write</span>
+        </button>
 
         <button
           className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 transition-colors"
@@ -104,7 +106,10 @@ export function Navbar({ onMenuToggle }: NavbarProps) {
             <DropdownMenuTrigger asChild>
               <Avatar className="w-8 h-8 cursor-pointer">
                 <AvatarImage src="" alt={email ?? "User"} />
-                <AvatarFallback className="text-xs font-medium" style={{ backgroundColor: "#F2F2F2", color: "#242424" }}>
+                <AvatarFallback
+                  className="text-xs font-medium"
+                  style={{ backgroundColor: "#F2F2F2", color: "#242424" }}
+                >
                   {userInitial}
                 </AvatarFallback>
               </Avatar>
@@ -119,7 +124,10 @@ export function Navbar({ onMenuToggle }: NavbarProps) {
               <DropdownMenuItem onClick={() => router.push("/")}>
                 Profile
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleLogout} className="text-destructive">
+              <DropdownMenuItem
+                onClick={handleLogout}
+                className="text-destructive"
+              >
                 Sign out
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -139,5 +147,5 @@ export function Navbar({ onMenuToggle }: NavbarProps) {
         )}
       </div>
     </header>
-  )
+  );
 }

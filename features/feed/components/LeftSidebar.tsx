@@ -35,9 +35,10 @@ export function LeftSidebar({ isOpen, onClose }: LeftSidebarProps) {
       >
         <nav className="flex flex-col gap-1 px-4">
           {navItems.map(({ icon: Icon, label, active }) => (
-            <button
+            <Link
+              href={active ? "/" : label.toLowerCase()}
               key={label}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors w-full text-left
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors w-full text-left cursor-pointer
                 ${active
                   ? "text-[#242424]"
                   : "text-[#757575] hover:text-[#242424] hover:bg-gray-50"
@@ -50,7 +51,7 @@ export function LeftSidebar({ isOpen, onClose }: LeftSidebarProps) {
                 style={{ color: active ? "#242424" : "#757575" }}
               />
               <span className={active ? "font-semibold" : ""}>{label}</span>
-            </button>
+            </Link>
           ))}
 
           {isAuthenticated && (

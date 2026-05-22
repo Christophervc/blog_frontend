@@ -2,7 +2,8 @@
 
 import { useEditor, EditorContent } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
-import { useEffect, useState } from "react"
+import Image from "@tiptap/extension-image"
+import { useEffect, useState, useRef } from "react"
 import {
   Bold,
   Italic,
@@ -10,7 +11,10 @@ import {
   Heading3,
   List,
   ListOrdered,
+  ImageIcon,
+  Loader2,
 } from "lucide-react"
+import { useUploadMedia } from "@/features/feed/hooks/useUploadMedia"
 
 interface TiptapEditorProps {
   value: string
@@ -20,12 +24,15 @@ interface TiptapEditorProps {
 
 export function TiptapEditor({ value, onChange }: TiptapEditorProps) {
   const [isReady, setIsReady] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const uploadMedia = useUploadMedia()
 
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
         heading: { levels: [2, 3] },
       }),
+      Image.configure({ inline: false }),
     ],
     content: value,
     onUpdate: ({ editor }) => {
@@ -35,7 +42,7 @@ export function TiptapEditor({ value, onChange }: TiptapEditorProps) {
     editorProps: {
       attributes: {
         class:
-          "prose prose-lg max-w-none focus:outline-none min-h-[300px] px-4 py-3 [&_p]:leading-relaxed [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mt-6 [&_h2]:mb-3 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-1",
+          "prose prose-lg max-w-none focus:outline-none min-h-[300px] px-4 py-3 [&_p]:leading-relaxed [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mt-6 [&_h2]:mb-3 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-1 [&_img]:rounded-lg [&_img]:my-4 [&_img]:mx-auto [&_img]:max-w-full [&_img]:h-auto",
       },
     },
   })
@@ -45,6 +52,24 @@ export function TiptapEditor({ value, onChange }: TiptapEditorProps) {
       editor.commands.setContent(value, { emitUpdate: false })
     }
   }, [value, isReady, editor])
+
+  function handleImageSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file || !editor) return
+
+    uploadMedia.mutate(
+      { file, folder: "posts" },
+      {
+        onSuccess: (result) => {
+          editor.chain().focus().setImage({ src: result.url }).run()
+        },
+      }
+    )
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""
+    }
+  }
 
   if (!editor) return null
 
@@ -99,6 +124,29 @@ export function TiptapEditor({ value, onChange }: TiptapEditorProps) {
         >
           <ListOrdered className="w-4 h-4" />
         </ToolbarButton>
+
+        <div className="w-px h-5 bg-border mx-1" />
+
+        <ToolbarButton
+          onClick={() => fileInputRef.current?.click()}
+          isActive={false}
+          label="Add image"
+        >
+          {uploadMedia.isPending ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <ImageIcon className="w-4 h-4" />
+          )}
+        </ToolbarButton>
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleImageSelect}
+          disabled={uploadMedia.isPending}
+        />
       </div>
       <EditorContent editor={editor} />
     </div>

@@ -5,14 +5,15 @@ export interface NavItem {
   icon: ComponentType<{ className?: string; style?: React.CSSProperties }>
   label: string
   active?: boolean
+  href: string
 }
 
 export const navItems: NavItem[] = [
-  { icon: Home, label: "Home", active: true },
-  { icon: Bookmark, label: "Library" },
-  { icon: User, label: "Profile" },
-  { icon: FileText, label: "Stories" },
-  { icon: BarChart3, label: "Stats" },
+  { icon: Home, label: "Home", active: true, href: "/" },
+  { icon: Bookmark, label: "Library", href: "/" },
+  { icon: User, label: "Profile", href: "/" },
+  { icon: FileText, label: "Stories", href: "/" },
+  { icon: BarChart3, label: "Stats", href: "/" },
 ]
 
 export interface FollowingItem {
