@@ -28,6 +28,8 @@ export interface CreatePostDTO {
   status: "DRAFT" | "PUBLISHED"
 }
 
+export type UpdatePostDTO = CreatePostDTO
+
 export interface UploadMediaResponse {
   url: string
   publicId: string

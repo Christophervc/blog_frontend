@@ -1,5 +1,5 @@
 import { api } from "@/lib/api"
-import type { PublishedPostsCursorResponse, PublishedPostCard, CreatePostDTO, UploadMediaResponse } from "@/features/feed/types/published-posts.types"
+import type { PublishedPostsCursorResponse, PublishedPostCard, CreatePostDTO, UpdatePostDTO, UploadMediaResponse } from "@/features/feed/types/published-posts.types"
 import type { Data as PostDetail } from "@/features/feed/types/blog-detail.interface"
 
 export interface GetPublishedPostsParams {
@@ -62,4 +62,13 @@ export async function createPost(dto: CreatePostDTO) {
 export async function deletePost(id: string) {
   const { data } = await api.delete<{ message: string }>(`/posts/${id}`)
   return data
+}
+
+export async function updatePost(id: string, data: UpdatePostDTO) {
+  const { data: response } = await api.put<PostDetail>(`/posts/${id}`, data)
+  return response
+}
+
+export async function deletePostImage(postId: string, imageId: string) {
+  await api.delete(`/media/${postId}/images/${imageId}`)
 }

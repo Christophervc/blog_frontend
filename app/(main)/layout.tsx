@@ -12,7 +12,7 @@ export default function MainLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = usePathname()
-  const isEditor = pathname === "/write"
+  const isEditor = pathname === "/write" || pathname.endsWith("/edit")
 
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: '"Inter", sans-serif' }}>

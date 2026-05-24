@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Settings, Pencil, Trash2, Loader2 } from "lucide-react"
 import {
   DropdownMenu,
@@ -29,6 +30,7 @@ interface PostActionsMenuProps {
 }
 
 export function PostActionsMenu({ postId, authorId, isDraft }: PostActionsMenuProps) {
+  const router = useRouter()
   const user = useAuthStore((state) => state.user)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const { mutate: deletePost, isPending } = useDeletePost({ isDraft })
@@ -48,7 +50,7 @@ export function PostActionsMenu({ postId, authorId, isDraft }: PostActionsMenuPr
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => console.log("Edit post", postId)}>
+          <DropdownMenuItem onClick={() => router.push(isDraft ? `/drafts/${postId}/edit` : `/posts/${postId}/edit`)}>
             <Pencil className="h-4 w-4" />
             Edit post
           </DropdownMenuItem>

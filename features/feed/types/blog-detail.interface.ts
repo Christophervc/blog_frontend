@@ -36,8 +36,9 @@ export interface Category {
 }
 
 export interface Image {
-    id:      string;
-    url:     string;
-    altText: string;
-    isCover: boolean;
+    id:        string;
+    url:       string;
+    publicId?: string;
+    altText:   string;
+    isCover:   boolean;
 }
