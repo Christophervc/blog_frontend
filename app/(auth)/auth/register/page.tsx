@@ -26,6 +26,7 @@ import { useAuthStore } from "@/lib/store/authStore"
 export default function RegisterPage() {
   const router = useRouter()
   const loginSuccess = useAuthStore((state) => state.loginSuccess)
+  const fetchUser = useAuthStore((state) => state.fetchUser)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
@@ -45,6 +46,7 @@ export default function RegisterPage() {
     try {
       await authService.register(data.fullName, data.email, data.password, data.confirmPassword)
       loginSuccess(data.email, data.fullName)
+      await fetchUser()
       toast.success("Account created successfully!")
       router.push("/")
     } catch (err: unknown) {

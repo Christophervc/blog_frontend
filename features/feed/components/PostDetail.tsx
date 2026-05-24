@@ -1,13 +1,14 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import Image from "next/image"
+import { PostActionsMenu } from "@/components/posts/PostActionsMenu"
 import type { Data as PostDetail } from "@/features/feed/types/blog-detail.interface"
 
 interface PostDetailProps {
   post: PostDetail
+  isDraft?: boolean
 }
 
-export function PostDetail({ post }: PostDetailProps) {
-  const coverImage = post.images.find((img) => img.isCover)
+export function PostDetail({ post, isDraft = false }: PostDetailProps) {
+  // const coverImage = post.images.find((img) => img.isCover)
   const formattedDate = new Date(post.createdAt).toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
@@ -28,7 +29,7 @@ export function PostDetail({ post }: PostDetailProps) {
             {authorInitial}
           </AvatarFallback>
         </Avatar>
-        <div className="flex flex-col">
+        <div className="flex-1 flex flex-col">
           <span
             className="text-sm font-medium"
             style={{ color: "#242424", fontFamily: '"Inter", sans-serif' }}
@@ -44,6 +45,11 @@ export function PostDetail({ post }: PostDetailProps) {
             <span>{post.readingTime} min read</span>
           </div>
         </div>
+        <PostActionsMenu
+          postId={post.id}
+          authorId={post.author.id}
+          isDraft={isDraft}
+        />
       </div>
 
       {/* Title */}

@@ -34,9 +34,9 @@ export function LeftSidebar({ isOpen, onClose }: LeftSidebarProps) {
         style={{ borderRight: "1px solid #E6E6E6" }}
       >
         <nav className="flex flex-col gap-1 px-4">
-          {navItems.map(({ icon: Icon, label, active }) => (
+          {navItems.map(({ icon: Icon, label, active, href }) => (
             <Link
-              href={active ? "/" : label.toLowerCase()}
+              href={active ? "/" : href.toLowerCase()}
               key={label}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors w-full text-left cursor-pointer
                 ${active

@@ -58,3 +58,8 @@ export async function createPost(dto: CreatePostDTO) {
   const { data } = await api.post<PostDetail>("/posts", dto)
   return data
 }
+
+export async function deletePost(id: string) {
+  const { data } = await api.delete<{ message: string }>(`/posts/${id}`)
+  return data
+}

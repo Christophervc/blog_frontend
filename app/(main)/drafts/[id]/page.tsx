@@ -28,5 +28,5 @@ export default function DraftDetailPage() {
     )
   }
 
-  return <PostDetail post={draft} />
+  return <PostDetail post={draft} isDraft={true} />
 }

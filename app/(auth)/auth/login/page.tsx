@@ -26,6 +26,7 @@ import { useAuthStore } from "@/lib/store/authStore"
 export default function LoginPage() {
   const router = useRouter()
   const loginSuccess = useAuthStore((state) => state.loginSuccess)
+  const fetchUser = useAuthStore((state) => state.fetchUser)
   const [showPassword, setShowPassword] = useState(false)
 
   const form = useForm<LoginFormData>({
@@ -42,6 +43,7 @@ export default function LoginPage() {
     try {
       await authService.login(data.email, data.password)
       loginSuccess(data.email, data.email)
+      await fetchUser()
       toast.success("Welcome back!")
       router.push("/")
     } catch (err: unknown) {

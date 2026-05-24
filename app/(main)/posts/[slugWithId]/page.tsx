@@ -31,5 +31,5 @@ export default function PostPage() {
     )
   }
 
-  return <PostDetailComponent post={post} />
+  return <PostDetailComponent post={post} isDraft={false} />
 }
