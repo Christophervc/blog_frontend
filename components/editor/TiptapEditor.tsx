@@ -3,7 +3,7 @@
 import { useEditor, EditorContent } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import Image from "@tiptap/extension-image"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useCallback } from "react"
 import {
   Bold,
   Italic,
@@ -13,20 +13,36 @@ import {
   ListOrdered,
   ImageIcon,
   Loader2,
+  Sparkles,
 } from "lucide-react"
 import { useUploadMedia } from "@/features/feed/hooks/useUploadMedia"
+import { useAiImprove } from "@/components/editor/hooks/useAiImprove"
+import { AiImprovePanel } from "@/components/editor/AiImprovePanel"
+import type { Tone } from "@/components/editor/hooks/useAiImprove"
 
 interface TiptapEditorProps {
   value: string
   onChange: (html: string) => void
   placeholder?: string
   onImageUploaded?: (image: { url: string; publicId: string }) => void
+  categoryId?: string
 }
 
-export function TiptapEditor({ value, onChange, onImageUploaded }: TiptapEditorProps) {
+export function TiptapEditor({ value, onChange, onImageUploaded, categoryId }: TiptapEditorProps) {
   const [isReady, setIsReady] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const uploadMedia = useUploadMedia()
+
+  const {
+    aiStatus,
+    setAiStatus,
+    aiResult,
+    aiError,
+    startStream,
+    insertResult,
+    discardResult,
+    cancelStream,
+  } = useAiImprove()
 
   const editor = useEditor({
     extensions: [
@@ -53,6 +69,26 @@ export function TiptapEditor({ value, onChange, onImageUploaded }: TiptapEditorP
       editor.commands.setContent(value, { emitUpdate: false })
     }
   }, [value, isReady, editor])
+
+  const handleImprove = useCallback(
+    (tone: Tone) => {
+      if (!editor || !categoryId) return
+      const content = editor.getHTML()
+      if (!content.trim()) return
+      startStream(content, categoryId, tone)
+    },
+    [editor, categoryId, startStream]
+  )
+
+  const handleInsert = useCallback(() => {
+    const result = insertResult()
+    if (result && editor) {
+      editor.commands.setContent(result)
+    }
+  }, [insertResult, editor])
+
+  const hasContent = editor ? editor.getText().trim().length > 0 : false
+  const canUseAI = hasContent && !!categoryId
 
   function handleImageSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -149,7 +185,39 @@ export function TiptapEditor({ value, onChange, onImageUploaded }: TiptapEditorP
           onChange={handleImageSelect}
           disabled={uploadMedia.isPending}
         />
+
+        <div className="w-px h-5 bg-border mx-1" />
+
+        <ToolbarButton
+          onClick={() => {
+            if (aiStatus === "idle") {
+              if (!canUseAI && !categoryId) return
+              setAiStatus("selecting-tone")
+            }
+          }}
+          isActive={aiStatus === "selecting-tone" || aiStatus === "streaming"}
+          label={categoryId ? "Improve with AI" : "Select a category first"}
+          disabled={!canUseAI && aiStatus === "idle"}
+        >
+          {aiStatus === "streaming" ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Sparkles className="w-4 h-4" />
+          )}
+        </ToolbarButton>
       </div>
+
+      <AiImprovePanel
+        aiStatus={aiStatus}
+        aiResult={aiResult}
+        aiError={aiError}
+        onSelectTone={handleImprove}
+        onInsert={handleInsert}
+        onDiscard={discardResult}
+        onCancel={cancelStream}
+        onRetry={() => setAiStatus("selecting-tone")}
+      />
+
       <EditorContent editor={editor} />
     </div>
   )
@@ -159,11 +227,13 @@ function ToolbarButton({
   onClick,
   isActive,
   label,
+  disabled,
   children,
 }: {
   onClick: () => void
   isActive: boolean
   label: string
+  disabled?: boolean
   children: React.ReactNode
 }) {
   return (
@@ -172,10 +242,13 @@ function ToolbarButton({
       onClick={onClick}
       title={label}
       aria-label={label}
+      disabled={disabled}
       className={`p-2 rounded-md transition-colors ${
-        isActive
-          ? "bg-gray-200 text-[#242424]"
-          : "text-[#757575] hover:bg-gray-100 hover:text-[#242424]"
+        disabled
+          ? "opacity-40 cursor-not-allowed"
+          : isActive
+            ? "bg-gray-200 text-[#242424]"
+            : "text-[#757575] hover:bg-gray-100 hover:text-[#242424]"
       }`}
     >
       {children}
