@@ -36,8 +36,14 @@ export function useAiImprove() {
         })
 
         if (!response.ok) {
+          if (response.status === 429) {
+            throw new Error("Daily AI improvement limit reached. Please try again tomorrow.")
+          }
+          if (response.status >= 500) {
+            throw new Error("AI service is temporarily unavailable. Please try again later.")
+          }
           const errBody = await response.text().catch(() => "")
-          throw new Error(errBody || `Server responded with ${response.status}`)
+          throw new Error(errBody || "Failed to improve content. Please try again.")
         }
 
         const reader = response.body!.getReader()

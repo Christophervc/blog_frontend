@@ -47,9 +47,19 @@ export function AiImprovePanel({
       {/* Tone selector */}
       {aiStatus === "selecting-tone" && (
         <div className="p-3 space-y-2">
-          <p className="text-xs font-medium" style={{ color: "#757575" }}>
-            Improve with AI
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-medium" style={{ color: "#757575" }}>
+              Improve with AI
+            </p>
+            <button
+              type="button"
+              onClick={onDiscard}
+              className="p-1 rounded-md hover:bg-gray-100 transition-colors"
+              aria-label="Close"
+            >
+              <X className="w-3.5 h-3.5" style={{ color: "#757575" }} />
+            </button>
+          </div>
           <div className="flex gap-2">
             {TONE_OPTIONS.map(({ value, label }) => {
               const Icon = TONE_ICONS[value]
