@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Search, SquarePen, Bell, Menu } from "lucide-react";
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,6 +23,14 @@ interface NavbarProps {
 export function Navbar({ onMenuToggle }: NavbarProps) {
   const router = useRouter();
   const { isAuthenticated, userInitial, email, logout } = useAuthStore();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -59,7 +68,8 @@ export function Navbar({ onMenuToggle }: NavbarProps) {
           Blogium
         </span>
 
-        <div
+        <form
+          onSubmit={handleSearch}
           className="hidden md:flex items-center gap-2 rounded-full px-3 h-9 w-64"
           style={{ backgroundColor: "#F2F2F2" }}
         >
@@ -67,10 +77,12 @@ export function Navbar({ onMenuToggle }: NavbarProps) {
           <input
             type="text"
             placeholder="Search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="bg-transparent border-none outline-none text-sm flex-1 min-w-0 placeholder:text-[#757575]"
             style={{ fontFamily: '"Inter", sans-serif', color: "#242424" }}
           />
-        </div>
+        </form>
       </div>
 
       <div className="flex items-center gap-1 md:gap-2 shrink-0">

@@ -5,6 +5,12 @@ import type { Data as PostDetail } from "@/features/feed/types/blog-detail.inter
 export interface GetPublishedPostsParams {
   cursor?: string
   limit?: number
+  keyword?: string
+  categoryId?: string
+  tagId?: string
+  authorId?: string
+  startDate?: string
+  endDate?: string
 }
 
 export async function getPublishedPosts(params?: GetPublishedPostsParams) {
