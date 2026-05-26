@@ -83,6 +83,7 @@ export function PostForm({ initialData, postId, existingImages = [] }: PostFormP
   })
 
   const watchedCategoryId = form.watch("categoryId")
+  const effectiveCategoryId = initialData?.categoryId || watchedCategoryId
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -300,7 +301,7 @@ export function PostForm({ initialData, postId, existingImages = [] }: PostFormP
                   onImageUploaded={({ url, publicId }) => {
                     urlToPublicIdRef.current.set(url, publicId)
                   }}
-                  categoryId={watchedCategoryId}
+                  categoryId={effectiveCategoryId}
                 />
               </FormControl>
               <FormMessage />

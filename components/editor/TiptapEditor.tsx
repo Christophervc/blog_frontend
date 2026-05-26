@@ -87,7 +87,8 @@ export function TiptapEditor({ value, onChange, onImageUploaded, categoryId }: T
     }
   }, [insertResult, editor])
 
-  const hasContent = editor ? editor.getText().trim().length > 0 : false
+  const rawText = value?.replace(/<[^>]*>/g, '').trim() ?? ''
+  const hasContent = rawText.length > 0
   const canUseAI = hasContent && !!categoryId
 
   function handleImageSelect(e: React.ChangeEvent<HTMLInputElement>) {
