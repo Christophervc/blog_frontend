@@ -9,13 +9,13 @@ export const createPostSchema = z.object({
     .string()
     .min(10, "Content must be at least 10 characters")
     .max(50000, "Content must not exceed 50,000 characters"),
-  categoryId: z.string().uuid("Invalid category ID"),
-  tagIds: z.array(z.string().uuid()).max(10, "Maximum 10 tags allowed"),
+  categoryId: z.uuid("Invalid category ID"),
+  tagIds: z.array(z.uuid()).max(10, "Maximum 10 tags allowed"),
   status: z.enum(["PUBLISHED", "DRAFT"]),
   images: z
     .array(
       z.object({
-        url: z.string().url(),
+        url: z.url(),
         publicId: z.string().optional(),
         altText: z.string().optional(),
         isCover: z.boolean().optional(),
